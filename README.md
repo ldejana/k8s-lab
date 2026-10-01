@@ -3,7 +3,6 @@
 # k8s-lab
 
 Hands-on lab for learning Kubernetes, Helm and Argo CD from first principles.
-Goal: deploy confidently and hold my own in conversations with the platform team.
 
 ## The one idea that ties all three together
 

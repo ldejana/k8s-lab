@@ -32,25 +32,26 @@ It listens on port 9898 and has `/healthz` and `/readyz` endpoints, so it's good
 
 ## Session 0: Setup (15 min, tonight)
 
-- [ ] Docker running (Docker Desktop, OrbStack, or Colima)
-- [ ] Install tools: `brew install kind kubectl helm` (or see each tool's install docs)
-- [ ] `kind create cluster --name lab`, then `kubectl get nodes` shows `Ready`
-- [ ] Create a **public** GitHub repo `k8s-lab` (public = Argo CD can read it without credentials in session 3)
-- [ ] Add this README, commit, push
-- [ ] Stop. Don't start session 1.
+- [x] Docker running (Docker Desktop, OrbStack, or Colima)
+- [x] Install tools: `brew install kind kubectl helm` (or see each tool's install docs)
+- [x] `kind create cluster --name lab`, then `kubectl get nodes` shows `Ready`
+- [x] Create a **public** GitHub repo `k8s-lab` (public = Argo CD can read it without credentials in session 3)
+- [x] Add this README, commit, push
+- [x] Stop. Don't start session 1.
 
 ## Session 1: Kubernetes
 
 **First-principles question:** What happens between `kubectl apply` and a running pod?
 
-- [ ] `kubectl get all -A`: what's already running in an empty cluster? Why?
-- [ ] Hand-write `01-k8s/deployment.yaml` for podinfo (1 replica) and apply it
-- [ ] `kubectl get pods -w` in one terminal, then delete the pod in another and watch it come back (this is reconciliation)
-- [ ] Change replicas to 3 **in the YAML** and re-apply (declarative, not `kubectl scale`)
-- [ ] Write `01-k8s/service.yaml`, `kubectl port-forward svc/podinfo 9898:9898`, `curl localhost:9898`
+- [x] `kubectl get all -A`: what's already running in an empty cluster? Why?
+- [x] Hand-write `01-k8s/deployment.yaml` for podinfo (1 replica) and apply it
+- [x] `kubectl get pods -w` in one terminal, then delete the pod in another and watch it come back (this is reconciliation)
+- [x] Change replicas to 3 **in the YAML** and re-apply (declarative, not `kubectl scale`)
+- [x] Write `01-k8s/service.yaml`, `kubectl port-forward svc/podinfo 9898:9898`, `curl localhost:9898`
+- [ ]  ▶ Warm-up (5 min): docker start lab-control-plane, kubectl get pods. Are the 3 pods back? kubectl port-forward svc/podinfo 9898:9898, then curl localhost:9898
 - [ ] Add readiness and liveness probes plus resource requests/limits
 - [ ] **Break it on purpose** and log each one in `notes.md` (symptom, command used, cause):
-  - [ ] Wrong image tag (expect `ImagePullBackOff`)
+  - [x] Wrong image tag (expect `ImagePullBackOff`)
   - [ ] Wrong liveness probe path (expect restarts)
   - [ ] Wrong readiness probe path (expect pod not `Ready`, no traffic)
   - [ ] Service selector that doesn't match pod labels (expect `kubectl get endpoints` to be empty)

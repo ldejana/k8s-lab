@@ -56,6 +56,31 @@ It listens on port 9898 and has `/healthz` and `/readyz` endpoints, so it's good
   - [ ] Wrong readiness probe path (expect pod not `Ready`, no traffic)
   - [ ] Service selector that doesn't match pod labels (expect `kubectl get endpoints` to be empty)
 - [ ] Commit
+- - [ ] **Imposter pod: labels are a contract** (about 15 min). Start a bare nginx pod with the label `app=podinfo` and see who notices.
+  - [ ] Load the images first (the node's network can't pull them):
+    ```bash
+    docker pull nginx:1.27 && kind load docker-image nginx:1.27 --name lab
+    docker pull curlimages/curl:8.10.1 && kind load docker-image curlimages/curl:8.10.1 --name lab
+    ```
+  - [ ] **Predict before running anything:** Does the Service send it traffic? Does the ReplicaSet delete a pod to get back to 3? What fraction of requests fail?
+  - [ ] Start it: `kubectl run imposter --image=nginx:1.27 --labels=app=podinfo`
+  - [ ] `kubectl get pods --show-labels`: compare the imposter's labels with the podinfo pods' labels
+  - [ ] `kubectl describe svc podinfo`: how many Endpoints now?
+  - [ ] `kubectl get replicaset -o wide`: read the SELECTOR column. Why is the imposter ignored?
+  - [ ] Send traffic from inside the cluster (port-forward sticks to one pod, so it won't show this):
+    ```bash
+    kubectl run tester --rm -it --image=curlimages/curl:8.10.1 --restart=Never -- \
+      sh -c 'for i in $(seq 1 20); do curl -s -m 2 -o /dev/null podinfo:9898 && echo ok || echo FAIL; done'
+    ```
+    How many `FAIL`s, and why? (Hint: which port does nginx listen on?)
+  - [ ] Clean up with `kubectl delete pod imposter` and confirm the Endpoints are back to 3
+  - [ ] Log in `notes.md`: what the Service checks (labels only), what the ReplicaSet checks (labels including `pod-template-hash`), and why the imposter was treated as ready immediately
+- [ ] `kubectl rollout undo deployment/podinfo`: what did it roll back to?
+- [ ] Write my answer to the first-principles question in `notes.md`
+- [ ] Commit
+
+**Done when:** I can answer the first-principles question out loud without notes.
+
 
 **Done when:** I can answer the first-principles question out loud without notes.
 

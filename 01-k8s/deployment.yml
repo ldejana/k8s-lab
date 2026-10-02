@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: podinfo
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: podinfo # I own pods with this label
+  template:
+    metadata:
+      labels: 
+        app: podinfo # must match the selector above
+    spec:
+      containers:
+        - name: podinfo
+          image: ghcr.io/stefanprodan/podinfo:6.7.0
+          ports:
+            - containerPort: 9898
+    

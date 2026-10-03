@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: podinfo
 spec:
-  replicas: 4
+  replicas: 3
   selector:
     matchLabels:
       app: podinfo # I own pods with this label
@@ -17,4 +17,18 @@ spec:
           image: ghcr.io/stefanprodan/podinfo:6.7.0
           ports:
             - containerPort: 9898
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 9898
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 9898
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              memory: 128Mi
     

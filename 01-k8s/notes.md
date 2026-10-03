@@ -53,3 +53,19 @@ Check the chain **Deployment → ReplicaSet → Pods**, in order:
 - `kubectl describe svc podinfo`
 - `Endpoints: 10.244.0.6:9898,10.244.0.7:9898,10.244.0.8:9898` = 3 pods matching the selector `app=podinfo`
 - The Service IP (`10.96.247.8`, ClusterIP) stays fixed while pod IPs change. That stable address is why Services exist.
+
+
+## Rollout and rollback
+
+Changing the template creates a new replica set.
+
+ex: added readiness probe created a new replica set and redirected the traffic.
+
+broken readiness probe:
+- a new replica set created but probe does not pass so the latest rs stalls
+- the previous replica set is then still in use
+
+revert the readiness probe:
+- results in the same template (rs hash) -> same replica set that is already running
+
+A broken readiness probe stalls the rollout; old pods keep serving. Nothing is rolled back, the new version just never takes over. Reverting the template to a previous version reuses that version's ReplicaSet.

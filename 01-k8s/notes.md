@@ -82,3 +82,21 @@ kubectl describe svc podinfo -> Endpoints = None
 kubectl port-forward svc/podinfo 9898:9898 -> times out, no matching pods
 curl localhost:9898 -> fail
 ```
+
+## Imposter pod
+
+pull images and load to cluster
+
+```
+docker pull nginx:1.27 && kind load docker-image nginx:1.27 --name lab
+docker pull curlimages/curl:8.10.1 && kind load docker-image curlimages/curl:8.10.1 --name lab
+```
+
+Create imposter pod (imposter is just pod name)
+`kubectl run imposter --image=nginx:1.27 --labels=app=podinfo`
+
+Result:
+
+1. Service redirects the traffic to the imposter pod as the label matches
+2. RS does not delete any pod to bring it back to the number of replicas selected.
+   If pod was to match the same hash of the RS, replica set would adopt it and adjust the number of pods (likely delete it as it's the newest). The match is not done based on the pod name, but on the labels.

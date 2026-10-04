@@ -51,11 +51,10 @@ It listens on port 9898 and has `/healthz` and `/readyz` endpoints, so it's good
 - [ ] Add readiness and liveness probes plus resource requests/limits
 - [ ] **Break it on purpose** and log each one in `notes.md` (symptom, command used, cause):
   - [x] Wrong image tag (expect `ImagePullBackOff`)
-  - [ ] ▶ Warm-up (5 min): docker start lab-control-plane, kubectl get pods. Are the 3 pods back? kubectl port-forward svc/podinfo 9898:9898, then curl localhost:9898
-  - [ ] Wrong liveness probe path (expect restarts)
+  - [x] Wrong liveness probe path (expect restarts)
   - [x] Wrong readiness probe path (expect pod not `Ready`, no traffic)
-  - [ ] Service selector that doesn't match pod labels (expect `kubectl get endpoints` to be empty)
-- [ ] Commit
+  - [x] Service selector that doesn't match pod labels (expect `kubectl get endpoints` to be empty)
+- [x] Commit
 - - [ ] **Imposter pod: labels are a contract** (about 15 min). Start a bare nginx pod with the label `app=podinfo` and see who notices.
   - [ ] Load the images first (the node's network can't pull them):
     ```bash

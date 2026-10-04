@@ -55,17 +55,30 @@ Check the chain **Deployment → ReplicaSet → Pods**, in order:
 - The Service IP (`10.96.247.8`, ClusterIP) stays fixed while pod IPs change. That stable address is why Services exist.
 
 
-## Rollout and rollback
+## Readiness and liveness
 
-Changing the template creates a new replica set.
+### Broken readiness
 
-ex: added readiness probe created a new replica set and redirected the traffic.
+Readiness OK -> complete rollout and redirect the traffic
 
-broken readiness probe:
-- a new replica set created but probe does not pass so the latest rs stalls
-- the previous replica set is then still in use
+Readiness probe NOT OK -> latest replica set stalls, the traffic remains on the previous RS
 
-revert the readiness probe:
-- results in the same template (rs hash) -> same replica set that is already running
+No rollback, the new version just never takes over.
 
-A broken readiness probe stalls the rollout; old pods keep serving. Nothing is rolled back, the new version just never takes over. Reverting the template to a previous version reuses that version's ReplicaSet.
+### Broken liveness 
+
+constant restart of pods, no rollback.
+it has exponential backoff, but kubernetes restarts indefinitely.
+
+## Selector break
+
+service.yml -> spec.selector points to random value
+
+result: pods not affected, but cannot reach the pods anymore
+
+```
+kubectl apply -f 01-k8s/service.yml
+kubectl describe svc podinfo -> Endpoints = None
+kubectl port-forward svc/podinfo 9898:9898 -> times out, no matching pods
+curl localhost:9898 -> fail
+```
